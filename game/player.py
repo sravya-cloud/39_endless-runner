@@ -2,11 +2,11 @@ import pygame
 
 class Player:
     def __init__(self, x, ground_y, width=30, height=40):
-        self.x = x
+        self.x = float(x)
         self.ground_y = ground_y
         self.width = width
         self.height = height
-        self.y = ground_y - height
+        self.y = float(ground_y - height)
         self.vy = 0
         self.gravity = 0.8
         self.jump_strength = -15
@@ -28,4 +28,4 @@ class Player:
             self.on_ground = True
 
     def rect(self):
-        return pygame.Rect(self.x, self.y, self.width, self.height)
+        return pygame.Rect(round(self.x), round(self.y), self.width, self.height)
