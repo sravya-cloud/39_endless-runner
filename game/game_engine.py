@@ -1,6 +1,7 @@
 import pygame
 from .player import Player
 from .obstacle import Obstacle
+from .sounds import SoundBank
 
 # Game Engine
 
@@ -32,6 +33,7 @@ class GameEngine:
         self.font = pygame.font.SysFont("Arial", 30)
         self.title_font = pygame.font.SysFont("Arial", 64, bold=True)
         self.should_quit = False
+        self.sounds = SoundBank()
 
         self.reset(DEFAULT_DIFFICULTY)
 
@@ -63,7 +65,9 @@ class GameEngine:
                             break
             return
         if event.type == pygame.KEYDOWN and event.key in (pygame.K_SPACE, pygame.K_UP, pygame.K_w):
-            self.player.jump()
+            if self.player.on_ground:  # only a real jump start makes a sound
+                self.player.jump()
+                self.sounds.play("jump")
 
     def handle_input(self):
         # Reserved for continuously-held-key input; this runner only
@@ -92,12 +96,14 @@ class GameEngine:
         for obstacle in self.obstacles:
             if obstacle.swept_rect().colliderect(player_rect):
                 self.game_over = True
+                self.sounds.play("game_over")
                 return
 
         for obstacle in self.obstacles:
             if not obstacle.scored and obstacle.x + obstacle.width < self.player.x:
                 obstacle.scored = True
                 self.score += 1
+                self.sounds.play("score")
 
         self.obstacles = [o for o in self.obstacles if not o.off_screen()]
 
